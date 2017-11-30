@@ -1,4 +1,6 @@
 function varargout = NeuroPatt_GUI(varargin)
+% GUI STILL UNDER DEVELOPMENT, FUNCTION WILL NOT WORK YET!
+%
 % NEUROPATT_GUI MATLAB code for NeuroPatt_GUI.fig
 %      NEUROPATT_GUI, by itself, creates a new NEUROPATT_GUI or raises the existing
 %      singleton*.

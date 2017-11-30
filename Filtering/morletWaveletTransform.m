@@ -27,7 +27,7 @@ function [cfx,cfreqso] = morletWaveletTransform(x, fs, cfreqs, morletParam, dim,
 % USAGE:
 %{
         fs = 1000;
-        t = 0:(1/Fs):2;
+        t = 0:(1/fs):2;
         x = chirp(t,3,1,8,'quadratic');
         cfreqs = linspace(1, 10, 100);
         % Use built-in spectrogram plotting with default Morlet parameter
@@ -113,7 +113,7 @@ if exist('plotFlag', 'var') && (strcmp(plotFlag, 'plot'))
     % Note: hsv is MATLAB's only built-in colormap suitable for circular
     % data, but it is very ugly
     if exist('pmkmp_new', 'file') == 2
-        colormap(pmkmp_new(256, 'ostwald_o'));
+        colormap(pmkmp_new('ostwald_o', 256));
     else
         colormap(hsv)
     end

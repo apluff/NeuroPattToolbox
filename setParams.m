@@ -50,7 +50,7 @@ useAmplitude = false;
 planeWaveThreshold = 0.85;
 % Minimum velocity field mean direction vector length for synchrony to be 
 % detected (default 0.85).
-synchronyThreshold = 0.85;
+synchronyThreshold = 0.8;
 % Minimum duration of a pattern for it to be stored (in seconds, default 0)
 minDurationSecs = 0.02;
 % Maximum duration between critical points (or synchrony/plane waves) for 

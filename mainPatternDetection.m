@@ -30,8 +30,10 @@ params = setParams(Fs);
 % Optionally give time limits by which to crop evoked data (leave empty
 % for no cropping)
 if size(LFPs,4) > 1
+    multipleTrialReps = true;
     timeCropLims = [-0.5, 1.5];
 else
+    multipleTrialReps = false;
     timeCropLims = [];
 end
 
@@ -176,11 +178,13 @@ for itrial = 1:size(wvcfs,4)
     allLocs{itrial} = pattLocs;
 end
 
-activeArray = makeActivePatternsArray(allPatts, length(pattTypes), size(wvcfs,3));
-figure
-imagesc((1:size(wvcfs,3))/Fs, 1:length(pattTypes), activeArray)
-set(gca, 'YTick', 1:length(pattTypes), 'YTickLabel', pattTypes)
-
+% Plot number of patterns over time (only if multiple trials are present)
+if multipleTrialReps
+    activeArray = makeActivePatternsArray(allPatts, length(pattTypes), size(wvcfs,3));
+    figure
+    imagesc((1:size(wvcfs,3))/Fs, 1:length(pattTypes), activeArray)
+    set(gca, 'YTick', 1:length(pattTypes), 'YTickLabel', pattTypes)
+end
 toc
 
 %% Examine evolution between patterns
@@ -196,29 +200,26 @@ end
 
 [nobs, nexp] = pattEvolution(allPatts, length(realTime), nafter, nbefore);
 rateDiff = (nobs - nexp) / length(realTime) * Fs;
-%rateDiff = (nobs - nexp);% ./ (nexp);
 disp('Observed minus expected pattern transitions/sec')
 disp(pattTypeStr)
 disp(nanmean(rateDiff,3))
 %disp(median(nobs,3) - median(nexp,3))
 
-disp('Wilcoxon sign rank test p-values')
-pvals = zeros(size(nobs,1));
-for initPatt = 1:size(nobs,1)
-    for nextPatt = 1:size(nobs,2)
-        thisObs = nobs(initPatt, nextPatt, :);
-        thisExp = nexp(initPatt, nextPatt, :);
-        [h, p] = ttest(thisObs(:),  thisExp(:));
-        pvals(initPatt, nextPatt) = p;
+% Test differences between observed and expected if multiple trials are
+% present
+if multipleTrialReps
+    disp('Wilcoxon sign rank test p-values')
+    pvals = zeros(size(nobs,1));
+    for initPatt = 1:size(nobs,1)
+        for nextPatt = 1:size(nobs,2)
+            thisObs = nobs(initPatt, nextPatt, :);
+            thisExp = nexp(initPatt, nextPatt, :);
+            [h, p] = ttest(thisObs(:),  thisExp(:));
+            pvals(initPatt, nextPatt) = p;
+        end
     end
+    disp(pvals)
 end
-disp(pvals)
-
-% symbolArray = zeros(1, size(activeArray,2));
-% for ipatt = 1:size(activeArray,1)
-%     symbolArray(activeArray(ipatt,:)>0) = ipatt;
-% end
-% motifs = temporalMotif(symbolArray, [2 3 4 5], 0);
 
 %% Plot pattern locations
 figure('Name', figTitle)

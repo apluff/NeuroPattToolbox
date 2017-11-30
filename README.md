@@ -10,3 +10,5 @@ Rory G. Townsend, Selina S. Solomon, Paul R. Martin, Samuel G. Solomon and Pulin
 
 Rory G. Townsend, Selina S. Solomon, Spencer C. Chen, Alexander N.J. Pietersen, Paul R. Martin, Samuel G. Solomon and Pulin Gong (2015). Emergence of Complex Wave Patterns in Primate Cerebral Cortex. Journal of Neuroscience, 35: 4657-4662.
 
+# License
+This project is licensed under the GNU General Public License Version 3 - see the LICENSE.md file for details.
