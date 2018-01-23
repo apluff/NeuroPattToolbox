@@ -56,7 +56,7 @@ for isnap = 1:nsnaps
             % Add critical points
             thisTime = allPatternLocs(:,3) == isnap;
             thisLoc = allPatternLocs(thisTime, 1:2);
-            scatter(thisLoc(:,1), thisLoc(:,2), 'filled')
+            scatter(thisLoc(:,2), thisLoc(:,1), 'filled')
         end
         
         xlim([-0.5, ny+1.5])

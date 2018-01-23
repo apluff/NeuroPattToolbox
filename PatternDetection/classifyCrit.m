@@ -34,9 +34,6 @@ for ic = 1:length(rowcoords)
     % resides in
     ix = rowcoords(ic);
     iy = colcoords(ic);
-    %     corners = sub2ind(size(vx), ...
-    %         [floor(ix) floor(ix); ceil(ix) ceil(ix)], ...
-    %         [floor(iy) ceil(iy); floor(iy) ceil(iy)]);
     corners = sub2ind(size(vx), ...
         [floor(ix) ceil(ix); floor(ix) ceil(ix)], ...
         [ceil(iy) ceil(iy); floor(iy) floor(iy)]);
@@ -67,11 +64,12 @@ for ic = 1:length(rowcoords)
     
     %     % Faster but less accurate: Estimate Jacobian for the cell from only
     %     % the corners
-    %     dxx = mean(vx(corners(:,2)) - vx(corners(:,1)));
-    %     dxy = mean(vx(corners(2,:)) - vx(corners(1,:)));
-    %     dyx = mean(vy(corners(:,2)) - vy(corners(:,1)));
-    %     dyy = mean(vy(corners(2,:)) - vy(corners(1,:)));
-    %     jacobians(:,:,ic) = [dxx dxy; dyx dyy];
+    %     dxx = mean(vx(corners(1,:)) - vx(corners(2,:)));
+    %     dxy = mean(vx(corners(:,2)) - vx(corners(:,1)));
+    %     dyx = mean(vy(corners(1,:)) - vy(corners(2,:)));
+    %     dyy = mean(vy(corners(:,2)) - vy(corners(:,1)));
+    %     ijac = [dxx dxy; dyx dyy];
+    %     jacobians(:,:,ic) = ijac;
     
     % Classify critical point by its Jacobian
     if det(ijac) < 0

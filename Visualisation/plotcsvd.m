@@ -102,7 +102,7 @@ for imode=1:nmodeplot
     quiver(real(thisMode), imag(thisMode), vectorScale);
     set(gca,'YDir','reverse', 'XTick', [], 'YTick', []);
     axis(0.5+[0 nc 0 nr])
-    title(sprintf('Var = %0.1f%%', prctVar(imode)))
+    title(sprintf('Mode %i, Var = %0.1f%%', imode, prctVar(imode)))
     %title(sprintf('Var = %0.1f%%, %0.2g%%', prctVar(imode), ...
     %    sum(prctVar(1:imode))))
     
@@ -121,6 +121,7 @@ for imode=1:nmodeplot
         line(xlim, [0 0], 'Color', 'k')
         hold off
         xlabel('Time')
+        ylabel('Component score')
     end
 end
 suptitle('Top SVD modes')

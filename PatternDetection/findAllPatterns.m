@@ -62,6 +62,7 @@ else
     inputParams = [];
 end
 
+% Define list of default parameter values
 checkParams = {'minDuration', 'planeWaveThreshold', ...
     'synchronyThreshold', 'maxTimeGap', 'minEdgeDist', ...
     'minCritRadius', 'maxDisplacement', 'combineNodeFocus', ...
@@ -69,6 +70,7 @@ checkParams = {'minDuration', 'planeWaveThreshold', ...
 defaultVals = [1 0.85 0.85 0 0 1 0.5 0 0];
 isDefault = false(size(checkParams));
 
+% Convert boolean values to doubles (temporarily)
 if any(strcmp(inputParams, 'combineNodeFocus')) && ...
         islogical(params.combineNodeFocus)
     params.combineNodeFocus = double(params.combineNodeFocus);
@@ -78,6 +80,7 @@ if any(strcmp(inputParams, 'combineStableUnstable')) && ...
     params.combineStableUnstable = double(params.combineStableUnstable);
 end
 
+% Set default values if any parameters are missing or invalid
 for iparam = 1:length(checkParams)
     thisPar = checkParams{iparam};
     if ~any(strcmp(inputParams, thisPar)) || isempty(params.(thisPar)) ...
@@ -87,6 +90,8 @@ for iparam = 1:length(checkParams)
         isDefault(iparam) = true;
     end
 end
+
+% Convert back to boolean
 params.combineNodeFocus = params.combineNodeFocus == 1;
 params.combineStableUnstable = params.combineStableUnstable == 1;
 
