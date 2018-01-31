@@ -69,7 +69,6 @@ switch pattType
         
     case 'saddle'
         % Saddle pattern
-        
         wave = exp(1i * (-w*t + k*abs(x-loc(1)-vel(1)*t) - ...
             k*abs(y-loc(2)-vel(2)*t)));
         

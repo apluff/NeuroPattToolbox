@@ -163,9 +163,9 @@ for it = 1 : ( size(video, 3) - 1 )
         badChannels, surroundLocs, alpha, ...
         beta, 0, ivx, ivy, prevFrame, next2Frame, angleFlag);
     
-    if convSteps == 1000
-        disp('HERE')
-    end
+%     if convSteps == 1000
+%         disp('HERE')
+%     end
     
     % Store results
     allConvSteps(it) = convSteps;
