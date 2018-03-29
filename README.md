@@ -6,9 +6,10 @@ NeuroPatt comes with a collection of user-friendly Matlab functions that allow f
 # Reference and citation
 If you use our code in your research, please cite us as follows: 
 
+Rory G. Townsend and Pulin Gong (2018). Detection and analysis of spatiotemporal patterns in brain activity, Under Review.
+
 Rory G. Townsend, Selina S. Solomon, Paul R. Martin, Samuel G. Solomon and Pulin Gong (2017). Visual motion discrimination by propagating patterns in primate cerebral cortex, Journal of Neuroscience, 37: 10074-10084.
 
-Rory G. Townsend, Selina S. Solomon, Spencer C. Chen, Alexander N.J. Pietersen, Paul R. Martin, Samuel G. Solomon and Pulin Gong (2015). Emergence of Complex Wave Patterns in Primate Cerebral Cortex. Journal of Neuroscience, 35: 4657-4662.
 
 # License
 This project is licensed under the GNU General Public License Version 3 - see the LICENSE.md file for details.
