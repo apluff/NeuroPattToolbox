@@ -1,12 +1,13 @@
-function wave = generatePattern(gridSize, pattType, amp, freq, ...
-    wavelength, loc, vel, gausswidth)
+function [wave, pattType] = generatePattern(gridSize, pattType, amp, ...
+    freq, wavelength, loc, vel, gausswidth)
 % GENERATEPATTERN generates a custom wave pattern based on inputs
 % INPUTS:
 %   - gridSize: 3 element vector [NX NY NT] giving the x, y, and time
 %       dimensions of the grid underlying the wave pattern
 %   - pattType: string giving the type of pattern to create, 'plane'
 %       for plane wave, 'sink' for sink pattern, 'source' for source
-%       pattern, 'spiral' for spiral wave, or 'saddle' for saddle pattern
+%       pattern, 'spiral' for spiral wave, or 'saddle' for saddle pattern.
+%       'random' picks a random critical point pattern.
 %   - amp: scalar specifying the maximum amplitude of the wave
 %   - freq: scalar specifying the wave oscillation frequency (per time
 %       step)
@@ -24,6 +25,12 @@ function wave = generatePattern(gridSize, pattType, amp, freq, ...
 %       wave pattern activity
 
 %% Process inputs
+% If pattern type is 'random', return a random critical point type
+if strcmp(pattType, 'random')
+    pattList = {'sink', 'source', 'spiral', 'saddle'};
+    pattType = pattList{randi(length(pattList))};
+end
+
 % Create grid of coordinates
 [x, y, t] = meshgrid(1:gridSize(1), 1:gridSize(2), 1:gridSize(3));
 
@@ -86,4 +93,7 @@ if exist('c', 'var')
         (y(:,:,1)-loc(2)).^2)));
     wave = addAmplitudeProfiles(wave, gaussian(c, loc));
 end
+
+% Ensure that the maximum amplitude is still AMP
+wave = wave / max(abs(wave(:))) * amp;
 

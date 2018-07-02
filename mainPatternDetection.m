@@ -25,7 +25,7 @@ loadDataRory
 % secondary parameters only used in this script
 
 % Main set of parameters from dedicated function
-params = setParams(Fs);
+params = setNeuroPattParams(Fs);
 
 % Optionally give time limits by which to crop evoked data (leave empty
 % for no cropping)
@@ -56,7 +56,7 @@ if params.useAmplitude
 else
     typeStr = 'phase';
 end
-if params.useMorlet
+if ~params.useHilbert
     figTitle = sprintf('%s_%iHz_mp%i_a%0.1fb%0.1f_%s', dataName, ...
         params.morletCfreq, params.morletParam, params.opAlpha, ...
         params.opBeta, typeStr);
@@ -208,7 +208,7 @@ disp(nanmean(rateDiff,3))
 % Test differences between observed and expected if multiple trials are
 % present
 if multipleTrialReps
-    disp('Wilcoxon sign rank test p-values')
+    disp('Paired t-test p-values')
     pvals = zeros(size(nobs,1));
     for initPatt = 1:size(nobs,1)
         for nextPatt = 1:size(nobs,2)
@@ -219,6 +219,8 @@ if multipleTrialReps
         end
     end
     disp(pvals)
+    disp('Bonferroni corrected p-values')
+    disp(pvals*numel(pvals))
 end
 
 %% Plot pattern locations
@@ -255,20 +257,13 @@ for ipatt = 1:length(unqPatts)
 end
 
 %% Perform singular value decomposition of velocity fields
-% Flag to use complex SVD, which means that spatial modes are free to
-% rotate (otherwise they can only be scaled)
-useComplexSVD = false;
 % Scale by which to increase vector length from MATLAB default
 vectorScale = 1.5;
 
 % Open new figure and plot SVD modes
 figure('Name', figTitle)
-if useEvoked
-    plotTime = realTime(1:end-1);
-else
-    plotTime = [];
-end
-plotcsvd(vfs, 6, plotTime, useComplexSVD, vectorScale);
+plotTime = (1:size(vfs,3))/Fs;
+plotcsvd(vfs, params.nSVDmodes, plotTime, params.useComplexSVD, vectorScale);
 
 %% Optionally save a video file of all data
 if saveVideo

@@ -1,5 +1,5 @@
 function [patterns, pattTypes, colNames, allPatternLocs, params] = ...
-    findAllPatterns(vfx, vfy, params, phase)
+    findAllPatterns(vfx, vfy, params, phase, repNumber)
 % FINDALLPATTERNS finds the patterns at each point in time for
 % the velocity fields determined by the XxYxTime matrices VFX and
 % VFY.
@@ -23,7 +23,7 @@ function [patterns, pattTypes, colNames, allPatternLocs, params] = ...
 %   params.synchronyThreshold gives the maximum mean vector magnitude below
 %       which all activity is considered synchony (default is two standard
 %       deviations below the mean).
-%   params.minEdgeDist gives the minimum number of indices from the arrays
+%   params.minEdgeDistance gives the minimum number of indices from the arrays
 %       edge for critical points to be considered (default 0).
 %   params.minCritRadius gives the minimum spatial radius for a critical
 %       point to occupy for it to be counted, quantified by the winding
@@ -55,6 +55,9 @@ nt = size(vfx, 3);
 if exist('phase', 'var')
     rlength = nanmean(nanmean(exp(1i*phase)));
 end
+if ~exist('repNumber', 'var') || ~isnumeric(repNumber) || ~isscalar(repNumber)
+    repNumber = [];
+end
 %% Check parameters and set default values if not supplied
 if exist('params', 'var') && isstruct(params)
     inputParams = fieldnames(params);
@@ -64,7 +67,7 @@ end
 
 % Define list of default parameter values
 checkParams = {'minDuration', 'planeWaveThreshold', ...
-    'synchronyThreshold', 'maxTimeGap', 'minEdgeDist', ...
+    'synchronyThreshold', 'maxTimeGap', 'minEdgeDistance', ...
     'minCritRadius', 'maxDisplacement', 'combineNodeFocus', ...
     'combineStableUnstable'};
 defaultVals = [1 0.85 0.85 0 0 1 0.5 0 0];
@@ -96,9 +99,8 @@ params.combineNodeFocus = params.combineNodeFocus == 1;
 params.combineStableUnstable = params.combineStableUnstable == 1;
 
 % Make sure that edge distance is at least as large as mininum radius
-if params.minEdgeDist < params.minCritRadius
-    params.minEdgeDist = params.minCritRadius;
-    fprintf('Setting minimum edge distance parameter to be equal to\ncritical point radius parameter.\n')
+if params.minEdgeDistance < params.minCritRadius
+    params.minEdgeDistance = params.minCritRadius;
 end
 
 
@@ -146,21 +148,27 @@ end
 
 %% Find plane waves and periods of synchrony
 % Set up patterns array
-pattTypes = {'planeWave', 'synchrony', 'stableNode', 'unstableNode', ...
-    'stableFocus', 'unstableFocus', 'saddle'};
+pattTypes = {'Plane wave', 'Synchrony', 'Sink', 'Source', ...
+    'Spiral-in', 'Spiral-out', 'Saddle'};
 if params.combineNodeFocus
     if params.combineStableUnstable
         pattTypes = pattTypes([1:3, 7]);
+        pattTypes{3} = 'Node/focus';
     else
         pattTypes = pattTypes([1:4, 7]);
     end
 elseif params.combineStableUnstable
     pattTypes = pattTypes([1:3, 5, 7]);
+    pattTypes{3} = 'Node';
+    pattTypes{4} = 'Spiral';
 end
 allPatternLocs = cell(length(pattTypes), 1);
 
 colNames = {'type', 'startTime', 'endTime', 'duration', 'startRow', ...
     'startCol', 'endRow', 'endCol', 'meanDisplacement'};
+if ~isempty(repNumber)
+    colNames = {colNames{:}, 'repetitionNumber'};
+end
 patterns = nan(nt, length(colNames));
 
 % Plane waves
@@ -223,7 +231,7 @@ for it = 1:nt
     ivx = vfx(:,:,it);
     ivy = vfy(:,:,it);
     [rowcoords, colcoords, cptypes] = classifyCrit(ivx, ivy, ...
-        params.minEdgeDist);
+        params.minEdgeDistance);
     % Combine coordinates and add time
     allcoords = [rowcoords, colcoords, repmat(it, size(rowcoords))];
     cpIsValid = true(size(rowcoords));
@@ -302,6 +310,9 @@ for itype = 1:ntypes
                 activeTimes(pointsInPattern(end)), 0, ...
                 positions(pointsInPattern(1), :), ...
                 positions(pointsInPattern(end), :), meanDisp];
+            if ~isempty(repNumber)
+                saveVec = [saveVec, repNumber];
+            end
             npat = npat + 1;
             patterns(npat,:) = saveVec;
                 

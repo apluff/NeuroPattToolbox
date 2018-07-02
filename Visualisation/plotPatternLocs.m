@@ -1,6 +1,6 @@
 function plotPatternLocs(allLocs, pattTypes, realTime, ntrials, nspacebins, smoothScale, useContours)
 % Takes the patterns cell array ALLPATTERNLOCS from findAllPatterns.m and
-% produces a number of plots
+% plots the distributions of all patterns over space
 
 plotTime = true;
 if isscalar(realTime)
@@ -9,6 +9,9 @@ if isscalar(realTime)
 end
 if ~exist('ntrials', 'var')
     ntrials = 1;
+end
+if ~exist('nspacebins', 'var')
+    nspacebins = 10;
 end
 if ~exist('smoothScale', 'var')
     smoothScale = 1;

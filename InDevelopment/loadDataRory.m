@@ -8,17 +8,17 @@ mouseResize = 0.2;
 useEvoked = true;
 
 if useEvoked
-    fileInd = 3;
+    fileInd = 6;
     % Set path to stimulus-evoked files
     recordingsEv = {'MA026-14','MA027-8', 'MA026-44', 'MA027-7', ...
         'MY144-111', 'MY147-31', 'MA026-46'};
     if isunix
         dataLoc = './Processed_data/Evoked/';
     else
-        dataLoc = 'D:\Evoked';
+        dataLoc = 'D:\MEA_Data\Evoked';
     end
     dataName = sprintf('evoked_%s.mat', recordingsEv{fileInd});
-    stimDir = 2;
+    stimDir = 1;
 else
     fileInd = 2;
     % Set path to spontaneous files
