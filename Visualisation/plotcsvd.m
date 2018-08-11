@@ -5,7 +5,7 @@ function [U, S, V] = plotcsvd(vf, nmodeplot, realTime, useComplexSVD, vectorScal
 %
 % INPUTS:
 % VF, a complex velocity field., Must be a 3D or 4D vector containing
-%   [row,column,time,trial].
+%   [x,y,time,trial].
 % NMODESPLOT, the number of spatial modes to plot (default 5).
 % REALTIME, vector containing the real time in seconds of all time points
 %   in VF. If REALTIME is empty or zero, only spatial modes will be 
@@ -18,7 +18,7 @@ function [U, S, V] = plotcsvd(vf, nmodeplot, realTime, useComplexSVD, vectorScal
 % OUTPUTS:
 % U, 
 %
-% Rory Townsend, Oct 2017
+% Rory Townsend, Aug 2018
 % rory.townsend@sydney.edu.au
 
 %% Set default values

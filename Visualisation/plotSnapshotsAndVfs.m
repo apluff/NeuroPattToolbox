@@ -5,12 +5,22 @@ function plotSnapshotsAndVfs(snaps, vfx, vfy, allPatternLocs, isPhase, plotSepar
 % vectors on snapshots, but setting options="separate" will plot them 
 % separately.
 
+% Rory Townsend, Aug 2018
+% rory.townsend@sydney.edu.au
+
 % Parse inputs and set defaults
 if ~exist('isPhase', 'var') || isempty(isPhase)
     isPhase = false;
 end
 if ~exist('plotSeparate', 'var')
     plotSeparate = false;
+end
+if exist('allPatternLocs', 'var') && iscell(allPatternLocs)
+    allPatternLocs = cat(1, allPatternLocs{:});
+end
+if any(imag(vfx(:))>0)
+    vfy = imag(vfx);
+    vfx = real(vfx);
 end
 
 % Choose colour maps

@@ -7,6 +7,9 @@ function outputs = mainProcessingWithOutput(data, Fs, params, textboxHandle, onl
 % velocity fields will not be output. If flag SUPPRESSFIGURES is true, no
 % new figures will be generated.
 
+% Rory Townsend, Aug 2018
+% rory.townsend@sydney.edu.au
+
 if nargin < 4
     textboxHandle = [];
 end
@@ -46,15 +49,14 @@ ntimesteps = size(data, timeDim) - 1;
 
 % Use band-pass filter then Hilbert transform or Morlet wavelet transform
 if params.useHilbert
-    warning('Hilbert transform not yet implemented! Using Morlet wavelets instead.')
-    % Band-pass filter
-    
-    % Apply Hilbert transform
+    wvcfs = filterSignal(data,params.hilbFreqLow, params.hilbFreqHigh, ...
+        Fs, timeDim, true);
 
-end
+else
     % Morlet wavelets
     wvcfs = squeeze(morletWaveletTransform(data, Fs, params.morletCfreq, ...
         params.morletParam, timeDim));
+end
 
 toc
 
@@ -130,12 +132,12 @@ disp(pattTypeStr)
 %disp(median(nobs,3) - median(nexp,3))
 
 disp('Fractional change between observed and expected')
-nanmean((nobs-nexp)./nexp, 3);
+disp(nanmean((nobs-nexp)./nexp, 3));
 
 % Test differences between observed and expected if multiple trials are
 % present
 if size(vfs, 4) > 1
-    disp('Paired t-test p-values')
+
     pvals = zeros(size(nobs,1));
     for initPatt = 1:size(nobs,1)
         for nextPatt = 1:size(nobs,2)
@@ -145,10 +147,9 @@ if size(vfs, 4) > 1
             pvals(initPatt, nextPatt) = p;
         end
     end
+    disp('Paired t-test p-values')
+    fprintf('Bonferroni correction factor = %i\n', numel(pvals))
     disp(pvals)
-    
-    disp('Bonferroni corrected p-values')
-    disp(pvals * numel(pvals))
 end
 
 % Set all outputs
@@ -175,4 +176,5 @@ disp(outputStr)
 if ishandle(textboxHandle)
     currentStr = get(textboxHandle, 'String');
     set(textboxHandle, 'String', sprintf('%s\n%s', currentStr{1}, outputStr));
+    drawnow
 end

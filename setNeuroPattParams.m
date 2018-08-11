@@ -10,6 +10,8 @@ function params = setNeuroPattParams(params, name, value, fs)
 %   parameters apart from NAME will be filled by the default values listed
 %   below.
 %
+% Rory Townsend, Aug 2018
+% rory.townsend@sydney.edu.au
 
 %% Parse inputs
 if nargin==1 && isnumeric(params)

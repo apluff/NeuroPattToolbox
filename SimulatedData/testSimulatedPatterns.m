@@ -1,16 +1,20 @@
 % Script to test the accuracy of pattern detection and tracking with
 % multiple simulated critical point patterns
 
+% Rory Townsend, Aug 2018
+% rory.townsend@sydney.edu.au
 close all
+rng(100)
 
 %% Set parameters
 gridSize = [16 16 10];
-alphas = [0.5];
-%alphas = linspace(0.1, 1.5, 8);
+alphas = 0.01;
+alphas = linspace(0, 3, 7);
+alphas(1) = 0.1;
 betas = [0.01, 10];
-noiselevels = logspace(-2, 1, 7);
-%noiselevels = 0.5;
-nreps = 20;
+%noiselevels = logspace(-2, 1, 7);
+noiselevels = 10^-0.5;
+nreps = 100;
 
 % Set parameters that apply to both patterns
 freq = 0.1;
@@ -24,7 +28,7 @@ maxWidth = 5;
 
 % Set details of first pattern
 ampA = [];
-typeA = 'source';
+typeA = 'random';
 fullNameA = 'Source';
 locA = [];
 velA = [];
@@ -35,7 +39,7 @@ velA = [];
 
 % Set details of second pattern
 ampB = [];
-typeB = 'sink';
+typeB = 'random';
 fullNameB = 'Sink';
 locB = [];
 velB = [];
@@ -55,7 +59,7 @@ end
 % Pattern detection parameters
 params.maxTimeGap = 0;
 params.minCritRadius = 2;
-params.minEdgeDist = 2;
+params.minEdgeDistance = 2;
 params.minDuration = 0;
 params.combineNodeFocus = true;
 
@@ -84,7 +88,7 @@ for ialpha = 1:length(alphas)
     fprintf('Processing waves with alpha = %s\n', string(alphas(ialpha)))
     
     for ibeta = 1:length(betas)
-        rng(1)
+        rng(5)
         for inoise = 1:length(noiselevels)
             for irep = 1:nreps
                 %% Generate random patterns
@@ -100,27 +104,6 @@ for ialpha = 1:length(alphas)
                     iampB = ampB;
                 end
                 
-                % Generate random center locations that are not too
-                % close to the edge and not too close together
-                if isempty(locA) || isempty(locB)
-                    ilocA = params.minEdgeDist + rand(1,2) .* ...
-                        (gridSize(1:2) - 2*params.minEdgeDist);
-                    locisvalid = false;
-                    for ii=1:1000
-                        ilocB = params.minEdgeDist + rand(1,2) .* ...
-                            (gridSize(1:2) - 2*params.minEdgeDist);
-                        if sqrt(sum((ilocB-ilocA).^2)) > 2*params.minCritRadius
-                            locisvalid = true;
-                            break
-                        end
-                    end
-                    if ~locisvalid
-                        error('Could not find valid critical point location! Consider reducing minCritRadius or minEdgeDistance.')
-                    end
-                else
-                    ilocA = locA;
-                    ilocB = locB;
-                end
                 % Generate random velocities with magnitude less than
                 % maxVelocity parameter
                 if isempty(velA)
@@ -135,6 +118,31 @@ for ialpha = 1:length(alphas)
                 else
                     ivelB = velB;
                 end
+                
+                % Generate random center locations that are not too
+                % close to the edge and not too close together
+                if isempty(locA) || isempty(locB)
+                    minEdgeDistA = params.minEdgeDistance + max(ivelA) + 1;
+                    ilocA = minEdgeDistA + rand(1,2) .* ...
+                        (gridSize(1:2) - 2*minEdgeDistA);
+                    locisvalid = false;
+                    minEdgeDistB = params.minEdgeDistance + max(ivelB) + 1;
+                    for ii=1:1000
+                        ilocB = minEdgeDistB + rand(1,2) .* ...
+                            (gridSize(1:2) - 2*minEdgeDistB);
+                        if sqrt(sum((ilocB-ilocA).^2)) > 3*params.minCritRadius
+                            locisvalid = true;
+                            break
+                        end
+                    end
+                    if ~locisvalid
+                        error('Could not find valid critical point location! Consider reducing minCritRadius or minEdgeDistance.')
+                    end
+                else
+                    ilocA = locA;
+                    ilocB = locB;
+                end
+                
                 % Generate random Gaussian width
                 if isempty(gaussWidth)
                     igausswidth = minWidth + rand * (maxWidth - minWidth);
@@ -186,7 +194,7 @@ for ialpha = 1:length(alphas)
                     plotVfs = true;
                     figure
                     for iplot = 1:2
-                        subplot(length(betas), length(alphas)+1, ...
+                        subplot(max([2, length(betas)]), length(alphas)+1, ...
                             (iplot-1) * (length(alphas) + 1) + 1)
                         imagesc(angle(thisWave(:,:,2*iplot)), [-pi pi])
                         colormap(pmkmp_new)
@@ -274,7 +282,7 @@ toc
 %% Plot results
 figure
 plotOptions = {'-o', 'CapSize', 0, 'MarkerFaceColor', 'auto', ...
-    'MarkerEdgeColor', 'auto', 'MarkerSize', 4};
+    'MarkerEdgeColor', 'none', 'MarkerSize', 4};
 if length(noiselevels) > 1
     % Plot noise level as x-axis
     xdata = repmat(log10(noiselevels), length(alphas), 1)';
@@ -313,7 +321,7 @@ for ibeta = 1:length(betas)
     
     % Plot number of missing patterns
     ax2 = subplot(1, 4, 2);
-    plotData(missingPatterns * 100 / (2 * gridSize(3)-1), ibeta);
+    plotData(missingPatterns * 100 / (2 * (gridSize(3)-1)), ibeta);
     %plotData(timeStepsWithNoExtra / (gridSize(3)-1), ibeta);
     hold on
     xlabel(xlab)
@@ -349,13 +357,21 @@ end
 % end
 
 %% Plot ROC curve
-% figure
-% truePositiveRate = 1 - missingPatterns / (2 * gridSize(3)-1);
-% falsePositiveRate = 
-% plotData = @(x, ibeta) errorbar(xdata, ...
-%         squeeze(nanmean(x(:,ibeta,:,:),4)), ...
-%         squeeze(nanstd(x(:,ibeta,:,:),[],4)) / sqrt(nreps), ...
-%         plotOptions{:});
+figure
+truePositiveRate = 1 - missingPatterns / (2 * (gridSize(3)-1));
+falsePositives = extraPatterns / gridSize(3);
+for ibeta = 1:length(betas)
+    thisx = squeeze(falsePositives(:,ibeta,:,:));
+    thisy = squeeze(truePositiveRate(:,ibeta,:,:));
+    xerr = nanstd(thisx,[],2) / sqrt(nreps);
+    yerr = nanstd(thisy,[],2) / sqrt(nreps);
+    
+    errorbar(nanmean(thisx,2), nanmean(thisy,2), yerr, yerr, xerr, xerr, ...
+        plotOptions{:})
+    hold on
+end
+xlabel('Mean false patterns / time step')
+ylabel('True positive rate')
 
 %% Print results
 fprintf('Pattern A: %s\n', typeA)

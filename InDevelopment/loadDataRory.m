@@ -8,7 +8,7 @@ mouseResize = 0.2;
 useEvoked = true;
 
 if useEvoked
-    fileInd = 6;
+    fileInd = 1;
     % Set path to stimulus-evoked files
     recordingsEv = {'MA026-14','MA027-8', 'MA026-44', 'MA027-7', ...
         'MY144-111', 'MY147-31', 'MA026-46'};
@@ -27,11 +27,14 @@ else
     filePartSp = '';
     if isunix
         dataLoc = './Processed_data/';
+        dataName = sprintf('LFPsHilbertSpikes_%s%s-%i.mat', ...
+            animalsSp{fileInd}, filePartSp, fileNumsSp(fileInd));
     else
-        error('Data missing!')
+        dataLoc = 'D:\MEA_Data\Spontaneous';
+        dataName = sprintf('%s-%i\\%s_Utah100-%i_', animalsSp{fileInd}, ...
+            fileNumsSp(fileInd), animalsSp{fileInd}, fileNumsSp(fileInd));
     end
-    dataName = sprintf('LFPsHilbertSpikes_%s%s-%i.mat', ...
-        animalsSp{fileInd}, filePartSp, fileNumsSp(fileInd));
+    
 end
 
 if useMouseCortex
@@ -63,10 +66,18 @@ else
         LFPs = permute(LFPs, [1 3 2]);
     else
         % Load spontaneous LFP data file
-        load(fullfile(dataLoc, dataName), 'LFPs', 'Fs')
+        if strcmp(dataName(end-3:end), '.mat')
+            load(fullfile(dataLoc, dataName), 'LFPs', 'Fs')
+        else
+            [LFPs, Fs] = preprocessDataFile(fullfile(dataLoc,dataName), 0);
+        end
     end
     
     % Convert to X-Y grid of electrodes
     LFPs = vector2grid(LFPs);
 end
 toc
+
+
+
+

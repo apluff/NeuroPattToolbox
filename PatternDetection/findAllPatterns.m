@@ -41,7 +41,7 @@ function [patterns, pattTypes, colNames, allPatternLocs, params] = ...
 % PARAMS can also be output, to keep track of any default values used.
 %
 %
-% Rory Townsend, Oct 2017
+% Rory Townsend, Aug 2018
 % rory.townsend@sydney.edu.au
 
 
@@ -188,7 +188,7 @@ allPatternLocs{1} = cat(2, real(vdir), imag(vdir), dirTimes, ...
 % Synchrony
 % Only detect synchrony if phase data is input
 if exist('phase', 'var')
-    syActive = rlength >= params.synchronyThreshold;
+    syActive = rlength(1:size(vfx,3)) >= params.synchronyThreshold;
     [syStart, syEnd] = findRuns(syActive, params.minDuration, [], ...
         params.maxTimeGap);
     nsy = length(syStart);
@@ -253,8 +253,8 @@ for it = 1:nt
             % Iteratively calculate every winding number up to required
             % radius
             for irad = 1:params.minCritRadius
-                index = windingNumberAngles(ivx, ivy, icoord, irad);
-                if index ~= goodIndex
+                index = windingNumberAngles(ivx, ivy, icoord, irad, 'both');
+                if any(index ~= goodIndex)
                     cpIsValid(icrit) = false;
                     break
                 end

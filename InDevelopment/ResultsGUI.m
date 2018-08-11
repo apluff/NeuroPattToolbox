@@ -22,7 +22,8 @@ function varargout = ResultsGUI(varargin)
 
 % Edit the above text to modify the response to help ResultsGUI
 
-% Last Modified by GUIDE v2.5 01-Jul-2018 11:25:22
+% Rory Townsend, Aug 2018
+% rory.townsend@sydney.edu.au
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 0;
@@ -206,4 +207,16 @@ disp('_________________________________________________________')
 disp('Repeating all analysis with surrogate data (white noise).')
 surResults = mainProcessingWithOutput(surData, results.Fs, results.params,[],1,1);
 surResults.params.isSurrogate = true;
+results.surReps = nreps;
+results.surPatterns = surResults.patterns;
+results.surPatternLocs = surResults.patternLocs;
+results.surProcessTime = surResults.processTime;
 ResultsGUI(data, surResults);
+
+
+% --- Executes on button press in closeButton.
+function closeButton_Callback(hObject, eventdata, handles)
+% hObject    handle to closeButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+close all
