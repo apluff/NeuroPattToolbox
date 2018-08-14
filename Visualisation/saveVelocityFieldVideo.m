@@ -34,6 +34,7 @@ if ~exist('resizeScale', 'var') || isempty(resizeScale) || resizeScale<=0
     resizeScale = 1;
 end
 if ~exist('vfScale', 'var') || isempty(vfScale) || resizeScale<=0
+    vfs = vfs / mean(abs(vfs(:)));
     vfScale = 1;
 end
 if ~exist('useAmpitude', 'var') || useAmplitude ~= 1
