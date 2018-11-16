@@ -1,5 +1,5 @@
 function [u, v, convergenceLoop] = opticalFlowStep(im1, im2, ...
-                                                   nanIndices, surroundLocs, alpha, beta,...
+                                                   nanIndices, surroundLocs, alfa, beta,...
                                                    showFlag, u0, v0, im0, im3, angleFlag)
 % Find the optical flow U, V between two images IM1 and IM2 from a video
 % sequence.
@@ -25,7 +25,7 @@ if ~exist('nanIndices', 'var')
     nanIndices = find(isnan(im1));
 end
 if nargin<6
-    alpha=0.5; % Smoothing factor
+    alfa=0.5; % Smoothing factor
 end
 if nargin<7
     beta = 0.1; % Charbonnier penalty weighting
@@ -115,13 +115,13 @@ for convergenceLoop = 1:maxIter
     if linear
         % Use original Horn-Schunk equations
         %gamma = 1 / alpha;
-        gamma = dataP / alpha;
+        gamma = dataP / alfa;
         delta = 4*smoothP;
         surroundTerms = surroundLocs.laplacian .* repmat(smoothP(:), 1, N);
     else
         % Use non-linear penalty function for more robust results (but
         % calculation may take more time)
-        gamma = dataP / alpha;
+        gamma = dataP / alfa;
         delta = 0;
         
         % Surrounding terms are a combination of laplacian and first
