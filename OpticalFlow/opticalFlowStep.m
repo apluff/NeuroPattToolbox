@@ -137,16 +137,14 @@ for convergenceLoop = 1:maxIter
     % Calculate b vector
     b = [gamma(:) .* Et(:) .* Ex(:); gamma(:) .* Et(:) .* Ey(:)];
     % Add diagonal terms
-    %A = sparse(diag([-delta(:) - Ex(:).^2 .* gamma(:) ; ...
-    %                 -delta(:) - Ey(:).^2 .* gamma(:)]));
-    
     diag_vals = [-delta(:) - Ex(:).^2 .* gamma(:); -delta(:) - Ey(:).^2 .* gamma(:)];
     % Create sparse diagonal matrix
     A = sparse(1:length(diag_vals), 1:length(diag_vals), diag_vals); 
     
     % Add off-diagonal terms for ui-vi dependence
     uvDiag = -Ex(:) .* Ey(:) .* gamma(:);
-    A = A + diag(uvDiag, N) + diag(uvDiag, -N);
+    p_off_diag = sparse([1:N, N+1:2*N]  , [N+1:2*N, 1:N], [uvDiag uvDiag], 2*N, 2*N); 
+    A = A + p_off_diag; 
     % Add other terms for surrounding locations
     A = A + [surroundTerms, sparse(N,N); sparse(N,N), surroundTerms];
     
