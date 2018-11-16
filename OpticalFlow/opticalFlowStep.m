@@ -146,7 +146,9 @@ for convergenceLoop = 1:maxIter
     p_off_diag = sparse([1:N, N+1:2*N]  , [N+1:2*N, 1:N], [uvDiag uvDiag], 2*N, 2*N); 
     A = A + p_off_diag; 
     % Add other terms for surrounding locations
-    A = A + [surroundTerms, sparse(N,N); sparse(N,N), surroundTerms];
+    sp_zeros = sparse(N,N);
+    A = A + [surroundTerms, sp_zeros; ...
+             sp_zeros, surroundTerms];
     
     % Solve this system of linear equations, adding a small value along the
     % diagonal to avoid potentially having a singular matrix
