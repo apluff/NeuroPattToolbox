@@ -127,17 +127,23 @@ for convergenceLoop = 1:maxIter
         
         % Surrounding terms are a combination of laplacian and first
         % spatial derivative terms
-        [psx, psy] = phasegradient(smoothP, [], 0, surroundLocs);        
-        surroundTerms = surroundLocs.dx .* repmat(psx(:), 1, N) + ...
-            surroundLocs.dy .* repmat(psy(:), 1, N) + ...
-            surroundLocs.laplacian .* repmat(smoothP(:), 1, N);
+        [psx, psy] = phasegradient(smoothP, [], 0, surroundLocs); 
+        
+        surroundTerms = surroundLocs.dx .* (psx(:).*ones(1, N)) + ...
+            surroundLocs.dy .* (psy(:).*ones(1, N)) + ...
+            surroundLocs.laplacian .* (smoothP(:).*ones( 1, N));
     end
     
     % Calculate b vector
     b = [gamma(:) .* Et(:) .* Ex(:); gamma(:) .* Et(:) .* Ey(:)];
     % Add diagonal terms
-    A = sparse(diag([-delta(:) - Ex(:).^2 .* gamma(:) ; ...
-        -delta(:) - Ey(:).^2 .* gamma(:)]));
+    %A = sparse(diag([-delta(:) - Ex(:).^2 .* gamma(:) ; ...
+    %                 -delta(:) - Ey(:).^2 .* gamma(:)]));
+    
+    diag_vals = [-delta(:) - Ex(:).^2 .* gamma(:); -delta(:) - Ey(:).^2 .* gamma(:)];
+    % Create sparse diagonal matrix
+    A = sparse(1:length(diag_vals), 1:length(diag_vals), diag_vals); 
+    
     % Add off-diagonal terms for ui-vi dependence
     uvDiag = -Ex(:) .* Ey(:) .* gamma(:);
     A = A + diag(uvDiag, N) + diag(uvDiag, -N);
