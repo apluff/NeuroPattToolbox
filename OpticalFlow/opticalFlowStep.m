@@ -77,6 +77,7 @@ smoothE = dataE;
 % Loop over different non-linear penalty functions until a fixed point is
 % reached
 for convergenceLoop = 1:maxIter
+    fprintf('Convergence Iteration, step %03d\n', convergenceLoop)
     
     lastDataE = dataE;
     lastSmoothE = smoothE;
@@ -152,7 +153,9 @@ for convergenceLoop = 1:maxIter
     
     % Solve this system of linear equations, adding a small value along the
     % diagonal to avoid potentially having a singular matrix
-    xexact = sparse(A+1e-10*eye(2*N))\b;
+    diag_small_value = sparse(1:2*N, 1:2*N, 1e-10);
+    A = A + diag_small_value;
+    xexact = A\b;
     
     % Reshape back to grids
     u = (1-relaxParam)*u + relaxParam*reshape(xexact(1:N), nrow, ncol);
