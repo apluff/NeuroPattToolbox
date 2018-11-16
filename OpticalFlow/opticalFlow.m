@@ -1,5 +1,5 @@
 function [velocityX, velocityY, allConvSteps] = ...
-    opticalFlow(video, badChannels, alpha, beta, angleFlag, nStepsDisplay)
+    opticalFlow(video, badChannels, alfa, beta, angleFlag, nStepsDisplay)
 % OPTICALFLOW estimates the velocity of pixels between frames in the 
 % (x x y x t) matrix VIDEO. 
 %
@@ -31,7 +31,7 @@ if ~exist('badChannels', 'var')
     badChannels = find(isnan(gradx) | isnan(grady));
 end
 if ~exist('alpha', 'var')
-    alpha = 0.2;
+    alfa = 0.2;
 end
 if ~exist('beta', 'var')
     beta = 1;
@@ -160,7 +160,7 @@ surroundLocs.laplacian = lapMatrix;
 for it = 1 : ( size(video, 3) - 1 )
     % Calculate optical flow
     [ivx, ivy, convSteps] = opticalFlowStep(frame, nextFrame, ...
-        badChannels, surroundLocs, alpha, ...
+        badChannels, surroundLocs, alfa, ...
         beta, 0, ivx, ivy, prevFrame, next2Frame, angleFlag);
     
 %     if convSteps == 1000
