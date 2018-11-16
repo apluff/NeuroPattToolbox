@@ -111,8 +111,9 @@ for convergenceLoop = 1:maxIter
     [nrow, ncol] = size(im1);
     N = nrow * ncol;
     
-    linear = false;
-    if linear
+    is_linear = false;
+
+    if is_linear
         % Use original Horn-Schunk equations
         %gamma = 1 / alpha;
         gamma = dataP / alfa;
