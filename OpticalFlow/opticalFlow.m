@@ -50,8 +50,8 @@ end
 nrows = size(video, 1);
 ncols = size(video, 2);
 nframes = size(video, 3);
-ivx = zeros(nrows, ncols);
-ivy = ivx;
+ivxx = zeros(nrows, ncols);
+ivy = ivxx;
 velocityX = zeros(nrows, ncols, nframes-1);
 velocityY = velocityX;
 allConvSteps = nan(1, nframes-1);
@@ -159,9 +159,9 @@ surroundLocs.laplacian = lapMatrix;
 % Loop over all time steps
 for it = 1 : ( size(video, 3) - 1 )
     % Calculate optical flow
-    [ivx, ivy, convSteps] = opticalFlowStep(frame, nextFrame, ...
+    [ivxx, ivy, convSteps] = opticalFlowStep(frame, nextFrame, ...
         badChannels, surroundLocs, alfa, ...
-        beta, 0, ivx, ivy, prevFrame, next2Frame, angleFlag);
+        beta, 0, ivxx, ivy, prevFrame, next2Frame, angleFlag);
     
 %     if convSteps == 1000
 %         disp('HERE')
@@ -169,7 +169,7 @@ for it = 1 : ( size(video, 3) - 1 )
     
     % Store results
     allConvSteps(it) = convSteps;
-    velocityX(:,:,it) = ivx;
+    velocityX(:,:,it) = ivxx;
     velocityY(:,:,it) = ivy;
     
     % Display the current step every MSTEPSDISPLAY steps
