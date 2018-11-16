@@ -57,7 +57,7 @@ else
 end
 
 % Pattern detection parameters
-params.maxTimeGap = 0;
+params.maxTimeGapSteps = 0;
 params.minCritRadius = 2;
 params.minEdgeDistance = 2;
 params.minDuration = 0;

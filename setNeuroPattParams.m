@@ -172,8 +172,8 @@ for iparam = 1:size(allParams, 1)
 end
 
 % Set secondary parameters that are defined by the sampling frequency
-params.maxTimeGap = floor(params.maxTimeGapSecs * fs / params.downsampleScale);
-params.minDuration = max(1, round(params.minDurationSecs * fs / params.downsampleScale));
+params.maxTimeGapSteps = floor(params.maxTimeGapSecs * fs / params.downsampleScale);
+params.minDurationSteps = max(1, round(params.minDurationSecs * fs / params.downsampleScale));
 
 end
 

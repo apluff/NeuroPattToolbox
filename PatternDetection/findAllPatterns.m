@@ -12,9 +12,9 @@ function [patterns, pattTypes, colNames, allPatternLocs, params] = ...
 %   index for each occurence of the pattern type in that cell.
 %
 % PARAMS is a structure containing optional user settings:
-%   params.minDuration is the minimum duration (in time steps) of a 
+%   params.minDurationSteps is the minimum duration (in time steps) of a 
 %       pattern for it to be detected (default 1).
-%   params.maxTimeGap gives the maximum duration in time steps between
+%   params.maxTimeGapSteps gives the maximum duration in time steps between
 %       critical points (or synchrony/plane waves) for them to be counted
 %       as the same pattern (default 0).
 %   params.planeWaveThreshold gives the minimum order parameter for
@@ -66,8 +66,8 @@ else
 end
 
 % Define list of default parameter values
-checkParams = {'minDuration', 'planeWaveThreshold', ...
-    'synchronyThreshold', 'maxTimeGap', 'minEdgeDistance', ...
+checkParams = {'minDurationSteps', 'planeWaveThreshold', ...
+    'synchronyThreshold', 'maxTimeGapSteps', 'minEdgeDistance', ...
     'minCritRadius', 'maxDisplacement', 'combineNodeFocus', ...
     'combineStableUnstable'};
 defaultVals = [1 0.85 0.85 0 0 1 0.5 0 0];
@@ -173,8 +173,8 @@ patterns = nan(nt, length(colNames));
 
 % Plane waves
 pwActive = phi>=params.planeWaveThreshold;
-[pwStart, pwEnd, pwValid] = findRuns(pwActive, params.minDuration, [], ...
-    params.maxTimeGap);
+[pwStart, pwEnd, pwValid] = findRuns(pwActive, params.minDurationSteps, [], ...
+    params.maxTimeGapSteps);
 npw = length(pwStart);
 patterns(1:npw, 1) = 1;
 patterns(1:npw, 2:3) = [pwStart, pwEnd];
@@ -189,8 +189,8 @@ allPatternLocs{1} = cat(2, real(vdir), imag(vdir), dirTimes, ...
 % Only detect synchrony if phase data is input
 if exist('phase', 'var')
     syActive = rlength(1:size(vfx,3)) >= params.synchronyThreshold;
-    [syStart, syEnd] = findRuns(syActive, params.minDuration, [], ...
-        params.maxTimeGap);
+    [syStart, syEnd] = findRuns(syActive, params.minDurationSteps, [], ...
+        params.maxTimeGapSteps);
     nsy = length(syStart);
     patterns(npat + (1:nsy), 1) = 2;
     patterns(npat + (1:nsy), 2:3) = [syStart, syEnd];
@@ -299,7 +299,7 @@ for itype = 1:ntypes
         pointIsSearched(pointsInPattern) = true;
         
         % Store pattern only if it lasts long enough
-        if length(pointsInPattern) > params.minDuration
+        if length(pointsInPattern) > params.minDurationSteps
             % Calculate mean displacement
             meanDisp = mean( findDist( ...
                 positions(pointsInPattern(1:(end-1))), ...
@@ -334,12 +334,12 @@ function pointsInPattern = findCritPatterns(thisIndex, activeTimes, ...
     positions, params, pointIsSearched)
 % Subfunction to recursively find a chain of critical points starting at
 % the point indicated by THISINDEX that are separated in time by less than
-% PARAMS.MAXTIMEGAP and in space by less than PARAMS.MAXDISPLACEMENT
+% PARAMS.MAXTIMEGAPSTEPS and in space by less than PARAMS.MAXDISPLACEMENT
 
 thisTime = activeTimes(thisIndex);
 thisPos = positions(thisIndex, :);
 
-% Find the critical point in the next PARAMS.MAXTIMEGAP time steps that
+% Find the critical point in the next PARAMS.MAXTIMEGAPSTEPS time steps that
 % occurs the soonest after THISTIME and has displacement less than
 % PARAMS.MAXDISPLACEMENT.
 foundIndex = 0;
@@ -353,7 +353,7 @@ for ipoint = thisIndex+1 : length(activeTimes)
     itimeDiff = activeTimes(ipoint) - thisTime;
     % Stop looking if the time difference is too great or if a point has
     % already been found in a previous time step
-    if itimeDiff > params.maxTimeGap + 1 || ...
+    if itimeDiff > params.maxTimeGapSteps + 1 || ...
             (foundIndex>0 && (activeTimes(ipoint) - lastTime) > 0)
         break
     end
