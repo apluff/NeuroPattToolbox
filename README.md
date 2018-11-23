@@ -5,7 +5,8 @@ NeuroPatt comes with a collection of user-friendly Matlab functions that allow f
 
 # Citation
 If you use our code in your research, please cite us as follows: 
-Rory G. Townsend and Pulin Gong (2018). Detection and analysis of spatiotemporal patterns in brain activity, Under Review, PLOS Computational Biology.
+
+Rory G. Townsend and Pulin Gong (2018). Detection and analysis of spatiotemporal patterns in brain activity, In Press, PLOS Computational Biology.
 
 # Usage
 All primary functions can be accessed through the NeuroPattGUI M-file. The toolbox includes a sample dataset of LFPs recorded from marmoset visual area MT (see references 1 and 2, 10x10 recording array, 5 repetitions of moving-dot stimulus presentations with stimulus turned on at 1s and sampling frequency 1017 Hz, MA026-14 Dir 1 Rep 40-44). This test data can be processed with the following:
@@ -40,5 +41,5 @@ As an alternative to using the GUI, all main functionality can instead be run th
 This project is licensed under the GNU General Public License Version 3 - see the LICENSE.md file for details.
 
 # References
-1. Townsend RG, Gong P. Detection and analysis of spatiotemporal patterns in brain activity, Under Review, PLOS Computational Biology 2018.
-2. McDonald JS, Clifford CWG, Solomon SS, Chen SC, Solomon SG. Integration and segregation of multiple motion signals by neurons in area MT of primate. J Neurophysiol. 2014;111: 369–378. doi:10.1152/jn.00254.2013
+Townsend RG, Gong P. Detection and analysis of spatiotemporal patterns in brain activity, In Press, PLOS Computational Biology 2018.
+
