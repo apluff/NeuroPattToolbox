@@ -30,7 +30,7 @@ if ~exist('badChannels', 'var')
     [gradx, grady] = phasegradient(video(:,:,1), badChannels, 0);
     badChannels = find(isnan(gradx) | isnan(grady));
 end
-if ~exist('alpha', 'var')
+if ~exist('alfa', 'var')
     alfa = 0.2;
 end
 if ~exist('beta', 'var')
