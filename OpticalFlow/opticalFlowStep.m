@@ -77,7 +77,6 @@ smoothE = dataE;
 % Loop over different non-linear penalty functions until a fixed point is
 % reached
 for convergenceLoop = 1:maxIter
-    fprintf('Convergence Iteration, step %03d\n', convergenceLoop)
     
     lastDataE = dataE;
     lastSmoothE = smoothE;
