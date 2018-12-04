@@ -1,5 +1,5 @@
 function [velocityX, velocityY, allConvSteps] = ...
-    opticalFlow(video, badChannels, alpha, beta, angleFlag, nStepsDisplay)
+    opticalFlow(video, badChannels, alfa, beta, angleFlag, nStepsDisplay)
 % OPTICALFLOW estimates the velocity of pixels between frames in the 
 % (x x y x t) matrix VIDEO. 
 %
@@ -30,8 +30,8 @@ if ~exist('badChannels', 'var')
     [gradx, grady] = phasegradient(video(:,:,1), badChannels, 0);
     badChannels = find(isnan(gradx) | isnan(grady));
 end
-if ~exist('alpha', 'var')
-    alpha = 0.2;
+if ~exist('alfa', 'var')
+    alfa = 0.2;
 end
 if ~exist('beta', 'var')
     beta = 1;
@@ -50,8 +50,8 @@ end
 nrows = size(video, 1);
 ncols = size(video, 2);
 nframes = size(video, 3);
-ivx = zeros(nrows, ncols);
-ivy = ivx;
+ivxx = zeros(nrows, ncols);
+ivyy = ivxx;
 velocityX = zeros(nrows, ncols, nframes-1);
 velocityY = velocityX;
 allConvSteps = nan(1, nframes-1);
@@ -159,9 +159,9 @@ surroundLocs.laplacian = lapMatrix;
 % Loop over all time steps
 for it = 1 : ( size(video, 3) - 1 )
     % Calculate optical flow
-    [ivx, ivy, convSteps] = opticalFlowStep(frame, nextFrame, ...
-        badChannels, surroundLocs, alpha, ...
-        beta, 0, ivx, ivy, prevFrame, next2Frame, angleFlag);
+    [ivxx, ivyy, convSteps] = opticalFlowStep(frame, nextFrame, ...
+        badChannels, surroundLocs, alfa, ...
+        beta, 0, ivxx, ivyy, prevFrame, next2Frame, angleFlag);
     
 %     if convSteps == 1000
 %         disp('HERE')
@@ -169,8 +169,8 @@ for it = 1 : ( size(video, 3) - 1 )
     
     % Store results
     allConvSteps(it) = convSteps;
-    velocityX(:,:,it) = ivx;
-    velocityY(:,:,it) = ivy;
+    velocityX(:,:,it) = ivxx;
+    velocityY(:,:,it) = ivyy;
     
     % Display the current step every MSTEPSDISPLAY steps
     if exist('nStepsDisplay', 'var') && nStepsDisplay > 0

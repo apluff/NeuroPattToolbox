@@ -1,6 +1,6 @@
 function [u, v, convergenceLoop] = opticalFlowStep(im1, im2, ...
-    nanIndices, surroundLocs, alpha, beta,...
-    showFlag, u0, v0, im0, im3, angleFlag)
+                                                   nanIndices, surroundLocs, alfa, beta,...
+                                                   showFlag, u0, v0, im0, im3, angleFlag)
 % Find the optical flow U, V between two images IM1 and IM2 from a video
 % sequence.
 %
@@ -25,7 +25,7 @@ if ~exist('nanIndices', 'var')
     nanIndices = find(isnan(im1));
 end
 if nargin<6
-    alpha=0.5; % Smoothing factor
+    alfa=0.5; % Smoothing factor
 end
 if nargin<7
     beta = 0.1; % Charbonnier penalty weighting
@@ -111,41 +111,50 @@ for convergenceLoop = 1:maxIter
     [nrow, ncol] = size(im1);
     N = nrow * ncol;
     
-    linear = false;
-    if linear
+    is_linear = false;
+
+    if is_linear
         % Use original Horn-Schunk equations
         %gamma = 1 / alpha;
-        gamma = dataP / alpha;
+        gamma = dataP / alfa;
         delta = 4*smoothP;
         surroundTerms = surroundLocs.laplacian .* repmat(smoothP(:), 1, N);
     else
         % Use non-linear penalty function for more robust results (but
         % calculation may take more time)
-        gamma = dataP / alpha;
+        gamma = dataP / alfa;
         delta = 0;
         
         % Surrounding terms are a combination of laplacian and first
         % spatial derivative terms
-        [psx, psy] = phasegradient(smoothP, [], 0, surroundLocs);        
-        surroundTerms = surroundLocs.dx .* repmat(psx(:), 1, N) + ...
-            surroundLocs.dy .* repmat(psy(:), 1, N) + ...
-            surroundLocs.laplacian .* repmat(smoothP(:), 1, N);
+        [psx, psy] = phasegradient(smoothP, [], 0, surroundLocs); 
+        
+        surroundTerms = surroundLocs.dx .* (psx(:).*ones(1, N)) + ...
+            surroundLocs.dy .* (psy(:).*ones(1, N)) + ...
+            surroundLocs.laplacian .* (smoothP(:).*ones( 1, N));
     end
     
     % Calculate b vector
     b = [gamma(:) .* Et(:) .* Ex(:); gamma(:) .* Et(:) .* Ey(:)];
     % Add diagonal terms
-    A = sparse(diag([-delta(:) - Ex(:).^2 .* gamma(:) ; ...
-        -delta(:) - Ey(:).^2 .* gamma(:)]));
+    diag_vals = [-delta(:) - Ex(:).^2 .* gamma(:); -delta(:) - Ey(:).^2 .* gamma(:)];
+    % Create sparse diagonal matrix
+    A = sparse(1:length(diag_vals), 1:length(diag_vals), diag_vals); 
+    
     % Add off-diagonal terms for ui-vi dependence
     uvDiag = -Ex(:) .* Ey(:) .* gamma(:);
-    A = A + diag(uvDiag, N) + diag(uvDiag, -N);
+    p_off_diag = sparse([1:N, N+1:2*N]  , [N+1:2*N, 1:N], [uvDiag uvDiag], 2*N, 2*N); 
+    A = A + p_off_diag; 
     % Add other terms for surrounding locations
-    A = A + [surroundTerms, sparse(N,N); sparse(N,N), surroundTerms];
+    sp_zeros = sparse(N,N);
+    A = A + [surroundTerms, sp_zeros; ...
+             sp_zeros, surroundTerms];
     
     % Solve this system of linear equations, adding a small value along the
     % diagonal to avoid potentially having a singular matrix
-    xexact = sparse(A+1e-10*eye(2*N))\b;
+    diag_small_value = sparse(1:2*N, 1:2*N, 1e-10);
+    A = A + diag_small_value;
+    xexact = A\b;
     
     % Reshape back to grids
     u = (1-relaxParam)*u + relaxParam*reshape(xexact(1:N), nrow, ncol);

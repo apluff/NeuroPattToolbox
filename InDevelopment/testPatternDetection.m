@@ -14,7 +14,7 @@ alpha = 0.5;
 beta = 1;
 
 % Pattern detection parameters
-params.maxTimeGap = 0;
+params.maxTimeGapSteps = 0;
 params.minEdgeDist = 0;
 params.minCritRadius = 0;
 
