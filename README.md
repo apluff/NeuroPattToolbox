@@ -45,5 +45,4 @@ As an alternative to using the GUI, all main functionality can instead be run th
 This project is licensed under the GNU General Public License Version 3 - see the LICENSE.md file for details.
 
 # References
-Townsend RG, Gong P. Detection and analysis of spatiotemporal patterns in brain activity, In Press, PLOS Computational Biology 2018.
-
+Townsend RG, Gong P. Detection and analysis of spatiotemporal patterns in brain activity, PLoS Computational Biology 14(12): e1006643, 2018.
