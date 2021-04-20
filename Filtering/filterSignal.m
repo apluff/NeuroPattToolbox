@@ -49,7 +49,7 @@ end
 
 % Optionally apply hilbert transform to extract the analytic signal
 if hilbertFlag
-    fx = hilbert(fx')';
+    fx = hilbert(fx);
 end
 
 % Reshape output to input size
