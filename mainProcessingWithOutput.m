@@ -72,9 +72,23 @@ meanCSteps = zeros(size(wvcfs,4), 1);
 % Calculate velocity fields for every trial, and same average number of
 % steps to converge
 for itrial = 1:size(wvcfs,4)
-    [vx, vy, csteps] = opticalFlow(wvcfs(:,:,:,itrial), badChannels, ...
+    [vx, vy, csteps] = opticalFlow2(wvcfs(:,:,:,itrial), badChannels, ...
         params.opAlpha, params.opBeta, ~params.useAmplitude);
+    % alternatively, you can use Matlab built-in function 'opticalflowHS', 
+    % which does not provide the penalty term Beta but is optimised for speed.
+    % alpha = 1 ;
+    % opticFlow = opticalFlowHS('Smoothness',alpha,'MaxIteration',100) ;
+    % Vx = zeros(size(wvcfs,1),size(wvcfs,2),size(wvcfs,3)-1) ;
+    % Vy = zeros(size(wvcfs,1),size(wvcfs,2),size(wvcfs,3)-1) ;
+    %  for iTime = 1:downR:size(sigIn,3)
+    %        flow = estimateFlow(opticFlow,wvcfs(:,:,iTime,itrial));
+    %        Vx(:,:,iTime) = flow.Vx ;
+    %        Vy(:,:,iTime) = flow.Vy ;
+
+    %  end
+
     vfs(:,:,:,itrial) = vx + 1i*vy;
+
     meanCSteps(itrial) = mean(csteps);
     fprintf('Processed trial %i\n', itrial)
 end

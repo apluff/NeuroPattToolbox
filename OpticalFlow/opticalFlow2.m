@@ -1,5 +1,5 @@
 function [velocityX, velocityY, allConvSteps] = ...
-    opticalFlow(video, badChannels, alfa, beta, angleFlag, nStepsDisplay)
+    opticalFlow2(video, badChannels, alfa, beta, angleFlag, nStepsDisplay)
 % OPTICALFLOW estimates the velocity of pixels between frames in the 
 % (x x y x t) matrix VIDEO. 
 %
