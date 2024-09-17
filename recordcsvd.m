@@ -1,4 +1,4 @@
-function [U, S, V] = plotcsvd(vf, nmodeplot, realTime, useComplexSVD, csvname)
+function [U, S, V] = plotcsvd(vf, nmodeplot, realTime, useComplexSVD, csvname, subject, session, id, age, trial, crop)
 % PLOTCSVD performs a singular vector decomposition of a vector field.
 %   Plots most dominant spatial modes and their time courses, and the
 %   trajectory of the top 3 most dominant modes.
@@ -97,7 +97,7 @@ for imode=1:nmodeplot
 
 	%% Check for first run of loop to create table headings
 	if imode == 1
-		fprintf(fileID, 'Mode,Variance\n');
+		fprintf(fileID, 'Subject,Session,id,Age,Trial,Crop,Mode,Variance\n');
 	end
 	
     % Plot spatial mode
@@ -117,8 +117,9 @@ for imode=1:nmodeplot
     %    sum(prctVar(1:imode))))
 	
 	%% Write imode and prctVar(imode) to the csv
-	fprintf(fileID, '%d,%0.1f\n', imode, prctVar(imode));
-    
+    fprintf(fileID, '%s,%s,%s,%s,%s,%s,%d,%0.1f\n', ...
+        subject, session, id, age, trial, crop, imode, prctVar(imode));
+	
     % Plot time course of spatial mode
     % if ~onlySpatial
         % subplot(2,nmodeplot,nmodeplot+imode)
