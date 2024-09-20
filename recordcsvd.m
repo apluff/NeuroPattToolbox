@@ -139,7 +139,7 @@ for imode=1:nmodeplot
     % end
 end
 fclose(fileID);
-suptitle('Top SVD modes')
+% suptitle('Top SVD modes')
 
 %% OPTIONAL: Also plot trajectory of top 3 modes
 % figure
